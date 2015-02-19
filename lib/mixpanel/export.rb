@@ -1,7 +1,9 @@
-require "mixpanel/export/version"
-require "mixpanel/export/events"
 require "httparty"
 require "digest"
+
+require "mixpanel/export/version"
+require "mixpanel/export/events"
+require "mixpanel/export/event_properties"
 
 module Mixpanel
   API_ENDPOINT = "http://mixpanel.com/api/2.0"
