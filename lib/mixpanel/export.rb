@@ -22,8 +22,8 @@ module Mixpanel
       query = options.merge(sig: calculate_signature(options), api_key: api_key)
 
       response = self.class.get(path, query: query)
-      raise response.response unless response.success?
-      response.body.to_s
+      response.error! unless response.success?
+      response.parsed_response
     end
 
     private
