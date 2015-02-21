@@ -1,51 +1,53 @@
 require 'spec_helper'
 
-describe Mixpanel::Export::EventProperties do
-  subject(:events) { Mixpanel::Export::EventProperties.new('api_secret', 'api_key') }
+describe MixpanelExport::Events do
+  subject(:events) { MixpanelExport::Events.new('api_secret', 'api_key') }
 
-  describe "#properties" do
+  describe "#all" do
     let(:response) do
-      { 'data':
-        { 'series': ['2010-05-29',
-                     '2010-05-30',
-                     '2010-05-31',
-                     ],
-          'values': {
-            'splash features': {
-              '2010-05-29': 6,
-              '2010-05-30': 4,
-              '2010-05-31': 5,
-            }
+      { 'data': {
+          'series': ['2010-05-29', '2010-05-30', '2010-05-31'],
+          'values': {'account-page': { '2010-05-30': 1, },
+          'splash features': { '2010-05-29': 6,
+                               '2010-05-30': 4,
+                               '2010-05-31': 5, }
           }
-        },
-        'legend_size': 2
-      }.to_json
+      },
+      'legend_size': 2 }.to_json
     end
 
     it "returns empty if body is empty" do
-      stub_request(:get, "http://mixpanel.com/api/2.0/events/properties").
+      stub_request(:get, "http://mixpanel.com/api/2.0/events").
       with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
       to_return(:status => 200, :body => "", :headers => {})
 
-      expect(events.properties).to eq("")
+      expect(events.all).to eq("")
     end
 
     it "return a json string if request succeeded" do
-      stub_request(:get, "http://mixpanel.com/api/2.0/events/properties").
+      stub_request(:get, "http://mixpanel.com/api/2.0/events").
       with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
       to_return(:status => 200, :body => response, :headers => {})
 
-      expect(events.properties).to eq(response)
+      expect(events.all).to eq(response)
     end
   end
 
   describe "#top" do
     let(:response) do
-      {'ad version': {'count': 295}, 'user type': {'count': 91}}.to_json
+      { 'events': [
+        { 'amount': 2,
+          'event': 'funnel',
+          'percent_change': -0.35635745999582824},
+        { 'amount': 75,
+          'event': 'pages',
+          'percent_change': -0.20209602478821687},
+        { 'amount': 2, 'event': 'projects', 'percent_change': 1.0 }],
+        'type': 'unique' }.to_json
     end
 
     it "returns empty if body is empty" do
-      stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/top").
+      stub_request(:get, "http://mixpanel.com/api/2.0/top").
       with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
       to_return(:status => 200, :body => "", :headers => {})
 
@@ -53,7 +55,7 @@ describe Mixpanel::Export::EventProperties do
     end
 
     it "return a json string if request succeeded" do
-      stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/top").
+      stub_request(:get, "http://mixpanel.com/api/2.0/top").
       with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
       to_return(:status => 200, :body => response, :headers => {})
 
@@ -61,25 +63,25 @@ describe Mixpanel::Export::EventProperties do
     end
   end
 
-  describe "#values" do
+  describe "#names" do
     let(:response) do
-      ['male', 'female', 'unknown'].to_json
+      [ 'battle','click signup button','send message','View homepage'].to_json
     end
 
     it "returns empty if body is empty" do
-      stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/values").
+      stub_request(:get, "http://mixpanel.com/api/2.0/names").
       with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
       to_return(:status => 200, :body => "", :headers => {})
 
-      expect(events.values).to eq("")
+      expect(events.names).to eq("")
     end
 
     it "return a json string if request succeeded" do
-      stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/values").
+      stub_request(:get, "http://mixpanel.com/api/2.0/names").
       with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
       to_return(:status => 200, :body => response, :headers => {})
 
-      expect(events.values).to eq(response)
+      expect(events.names).to eq(response)
     end
   end
 end

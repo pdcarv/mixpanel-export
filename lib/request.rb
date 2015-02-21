@@ -1,11 +1,7 @@
 require "httparty"
 require "digest"
 
-require "mixpanel/export/version"
-require "mixpanel/export/events"
-require "mixpanel/export/event_properties"
-
-module Mixpanel
+module MixpanelExport
   API_ENDPOINT = "http://mixpanel.com/api/2.0"
 
   class Request
@@ -23,7 +19,7 @@ module Mixpanel
 
       response = self.class.get(path, query: query)
       response.error! unless response.success?
-      response.parsed_response
+      response.parsed_response || ""
     end
 
     private
