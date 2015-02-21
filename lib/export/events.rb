@@ -1,23 +1,21 @@
-module Mixpanel
-  module Export
-    class Events
-      attr_reader :request
+module MixpanelExport
+  class Events
+    attr_reader :request
 
-      def initialize(api_secret, api_key)
-        @request = Mixpanel::Request.new(api_secret, api_key)
-      end
+    def initialize(api_secret, api_key)
+      @request = MixpanelExport::Request.new(api_secret, api_key)
+    end
 
-      def all(options={})
-        request.get('/events', options)
-      end
+    def all(options={})
+      request.get('/events', options)
+    end
 
-      def top(options={})
-        request.get('/top', options)
-      end
+    def top(options={})
+      request.get('/top', options)
+    end
 
-      def names(options={})
-        request.get('/names', options)
-      end
+    def names(options={})
+      request.get('/names', options)
     end
   end
 end

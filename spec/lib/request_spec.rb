@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Mixpanel::Request do
-  let(:request) { Mixpanel::Request.new('api_secret', 'api_key') }
+describe MixpanelExport::Request do
+  let(:request) { MixpanelExport::Request.new('api_secret', 'api_key') }
 
   describe "#get" do
     it "raises error if the request is not successful" do

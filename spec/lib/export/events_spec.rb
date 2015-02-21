@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Mixpanel::Export::Events do
-  subject(:events) { Mixpanel::Export::Events.new('api_secret', 'api_key') }
+describe MixpanelExport::Events do
+  subject(:events) { MixpanelExport::Events.new('api_secret', 'api_key') }
 
   describe "#all" do
     let(:response) do
