@@ -1,3 +1,3 @@
-require "mixpanel/export"
+require "mixpanel"
 require "webmock/rspec"
 
