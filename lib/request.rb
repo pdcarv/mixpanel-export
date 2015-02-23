@@ -4,6 +4,8 @@ require "digest"
 module MixpanelExport
   API_ENDPOINT = "http://mixpanel.com/api/2.0"
 
+  class RequestError < HTTParty::Error; end
+
   class Request
     include HTTParty
     base_uri API_ENDPOINT
@@ -15,7 +17,7 @@ module MixpanelExport
 
     def get(path, options={})
       response = self.class.get(path, query: build_query(options))
-      response.error! unless response.success?
+      raise RequestError, response.parsed_response["error"] unless response.success?
       response.parsed_response || ""
     end
 
@@ -23,18 +25,19 @@ module MixpanelExport
 
     attr_reader :api_secret, :api_key
 
-    def calculate_signature(options)
-      args_sorted  = options.sort
-      args_contact = args_sorted.map { |k, v| "#{k}=#{v}" }.join
+    def calculate_signature(args)
+      args_sorted = args.sort_by { |k,v| k.to_s }
+      args_concat = args_sorted.map { |k,v| "#{k}=#{v}" }.join
 
-      Digest::MD5.hexdigest(args_contact + api_secret)
+      Digest::MD5.hexdigest(args_concat + api_secret)
     end
 
     def build_query(options)
       query = options.dup || {}
       query.merge!(format: :json)
-      query.merge!(expire: Time.now.to_i)
-      query.merge!(sig: calculate_signature(options), api_key: api_key)
+      query.merge!(expire: (Time.now.utc + 10).to_i)
+      query.merge!(api_key: api_key)
+      query.merge!(sig: calculate_signature(query))
       query
     end
   end

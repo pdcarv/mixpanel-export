@@ -7,6 +7,7 @@ module MixpanelExport
     end
 
     def all(options={})
+      options[:unit] = options[:unit] || "month"
       request.get('/events', options)
     end
 
