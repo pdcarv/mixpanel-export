@@ -26,17 +26,15 @@ module MixpanelExport
     attr_reader :api_secret, :api_key
 
     def calculate_signature(args)
-      args_sorted = args.sort_by { |k,v| k.to_s }
-      args_concat = args_sorted.map { |k,v| "#{k}=#{v}" }.join
+      args_concat = args.map { |k,v| "#{k}=#{v}" }.sort.join
 
       Digest::MD5.hexdigest(args_concat + api_secret)
     end
 
     def build_query(options)
       query = options.dup || {}
-      query.merge!(format: :json)
-      query.merge!(expire: (Time.now.utc + 10).to_i)
-      query.merge!(api_key: api_key)
+      query.merge!(format: "json", api_key: api_key)
+      query.merge!(expire: Time.now.to_i + 10)
       query.merge!(sig: calculate_signature(query))
       query
     end
