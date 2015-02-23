@@ -18,8 +18,12 @@ module MixpanelExport
 
     def get(path, options={})
       response = self.class.get(path, query: build_query(options))
-      raise RequestError, response.parsed_response["error"] unless response.success?
-      response.parsed_response || ""
+
+      if response.success?
+        response.parsed_response || ""
+      else
+        raise RequestError, response.parsed_response["error"]
+      end
     end
 
     private
@@ -28,6 +32,7 @@ module MixpanelExport
 
     def calculate_signature(args)
       digest = Digest::MD5.new
+
       digest << args.map do |k,v|
         "#{k}=" <<
             case v
@@ -62,7 +67,7 @@ module MixpanelExport
     end
 
     def default_request_expiration
-      Time.now.to_i + 600
+      Time.now.utc.to_i + 600
     end
   end
 end

@@ -32,7 +32,7 @@ describe MixpanelExport::Request do
 
   describe "#calculate_signature" do
     it "returns a valid signature" do
-      options = { api_key: "f0aa346688cee071cd85d857285a3464", interval: 7, type: "average", event: ["splash features<", "account-page"], unit: "day", expire: 1275624968 }
+      options = { api_key: "f0aa346688cee071cd85d857285a3464", interval: 7, type: "average", event: ["splash features<", "account-page"], unit: "day", expire: 1275624968, format: "json" }
       expect(request.send(:calculate_signature, options)).to eq('046ceec93983811dad0fb20f842c351a')
     end
   end
