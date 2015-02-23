@@ -1,5 +1,6 @@
 require "httparty"
 require "digest"
+require "json"
 
 module MixpanelExport
   API_ENDPOINT = "http://mixpanel.com/api/2.0"
@@ -26,17 +27,41 @@ module MixpanelExport
     attr_reader :api_secret, :api_key
 
     def calculate_signature(args)
-      args_concat = args.map { |k,v| "#{k}=#{v}" }.sort.join
-
-      Digest::MD5.hexdigest(args_concat + api_secret)
+      digest = Digest::MD5.new
+      digest << args.map do |k,v|
+        "#{k}="
+          << case v
+             when is_a?(String)
+               v.encode("utf-8")
+             when is_a?(Array)
+               JSON.dump(v).encode("utf-8")
+             else
+               v.to_s
+             end
+      end.sort.join
+      digest << api_secret
+      digest.hexdigest
     end
 
     def build_query(options)
       query = options.dup || {}
-      query.merge!(format: "json", api_key: api_key)
-      query.merge!(expire: Time.now.to_i + 10)
+
+      query = ({
+        format: default_format,
+        expire: default_request_expiration,
+        api_key: api_key
+      }).merge(query)
+
       query.merge!(sig: calculate_signature(query))
       query
+    end
+
+    def default_format
+      "json"
+    end
+
+    def default_request_expiration
+      Time.now.to_i + 600
     end
   end
 end

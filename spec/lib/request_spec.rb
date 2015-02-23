@@ -42,7 +42,7 @@ describe MixpanelExport::Request do
       expire_date = Time.now.utc
       Time.stub(:now).and_return(expire_date)
 
-      expect(request.send(:build_query, {})).to include(expire: (expire_date + 10).to_i)
+      expect(request.send(:build_query, {})).to include(expire: (expire_date.to_i + 600))
     end
   end
 end
