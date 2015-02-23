@@ -29,16 +29,17 @@ module MixpanelExport
     def calculate_signature(args)
       digest = Digest::MD5.new
       digest << args.map do |k,v|
-        "#{k}="
-          << case v
-             when is_a?(String)
-               v.encode("utf-8")
-             when is_a?(Array)
-               JSON.dump(v).encode("utf-8")
-             else
-               v.to_s
-             end
+        "#{k}=" <<
+            case v
+            when is_a?(String)
+              v.encode("utf-8")
+            when is_a?(Array)
+              JSON.dump(v).encode("utf-8")
+            else
+              v.to_s
+            end
       end.sort.join
+
       digest << api_secret
       digest.hexdigest
     end
