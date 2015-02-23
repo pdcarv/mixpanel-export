@@ -2,6 +2,11 @@ require 'spec_helper'
 
 describe MixpanelExport::EventProperties do
   subject(:events) { MixpanelExport::EventProperties.new('api_secret', 'api_key') }
+  let!(:expire_date) { Time.now }
+
+  before do
+    Time.stub(:now).and_return(expire_date)
+  end
 
   describe "#properties" do
     let(:response) do
@@ -24,7 +29,7 @@ describe MixpanelExport::EventProperties do
 
     it "returns empty if body is empty" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events/properties").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => "", :headers => {})
 
       expect(events.properties).to eq("")
@@ -32,7 +37,7 @@ describe MixpanelExport::EventProperties do
 
     it "return a json string if request succeeded" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events/properties").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => response, :headers => {})
 
       expect(events.properties).to eq(response)
@@ -46,7 +51,7 @@ describe MixpanelExport::EventProperties do
 
     it "returns empty if body is empty" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/top").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => "", :headers => {})
 
       expect(events.top).to eq("")
@@ -54,7 +59,7 @@ describe MixpanelExport::EventProperties do
 
     it "return a json string if request succeeded" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/top").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => response, :headers => {})
 
       expect(events.top).to eq(response)
@@ -68,7 +73,7 @@ describe MixpanelExport::EventProperties do
 
     it "returns empty if body is empty" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/values").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => "", :headers => {})
 
       expect(events.values).to eq("")
@@ -76,7 +81,7 @@ describe MixpanelExport::EventProperties do
 
     it "return a json string if request succeeded" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events/properties/values").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => response, :headers => {})
 
       expect(events.values).to eq(response)

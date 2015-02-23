@@ -2,6 +2,11 @@ require 'spec_helper'
 
 describe MixpanelExport::Events do
   subject(:events) { MixpanelExport::Events.new('api_secret', 'api_key') }
+  let!(:expire_date) { Time.now }
+
+  before do
+    Time.stub(:now).and_return(expire_date)
+  end
 
   describe "#all" do
     let(:response) do
@@ -18,7 +23,7 @@ describe MixpanelExport::Events do
 
     it "returns empty if body is empty" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => "", :headers => {})
 
       expect(events.all).to eq("")
@@ -26,7 +31,7 @@ describe MixpanelExport::Events do
 
     it "return a json string if request succeeded" do
       stub_request(:get, "http://mixpanel.com/api/2.0/events").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => response, :headers => {})
 
       expect(events.all).to eq(response)
@@ -48,7 +53,7 @@ describe MixpanelExport::Events do
 
     it "returns empty if body is empty" do
       stub_request(:get, "http://mixpanel.com/api/2.0/top").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => "", :headers => {})
 
       expect(events.top).to eq("")
@@ -56,7 +61,7 @@ describe MixpanelExport::Events do
 
     it "return a json string if request succeeded" do
       stub_request(:get, "http://mixpanel.com/api/2.0/top").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => response, :headers => {})
 
       expect(events.top).to eq(response)
@@ -70,7 +75,7 @@ describe MixpanelExport::Events do
 
     it "returns empty if body is empty" do
       stub_request(:get, "http://mixpanel.com/api/2.0/names").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => "", :headers => {})
 
       expect(events.names).to eq("")
@@ -78,7 +83,7 @@ describe MixpanelExport::Events do
 
     it "return a json string if request succeeded" do
       stub_request(:get, "http://mixpanel.com/api/2.0/names").
-      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca' }).
+      with(query: { api_key: 'api_key', sig: 'e720dfe014c0107e3f080b0880997bca', expire: expire_date.to_i, format: :json }).
       to_return(:status => 200, :body => response, :headers => {})
 
       expect(events.names).to eq(response)
