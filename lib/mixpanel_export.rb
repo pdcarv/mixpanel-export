@@ -4,3 +4,6 @@ require "mixpanel_export/events"
 require "mixpanel_export/event_properties"
 require "mixpanel_export/segmentation"
 
+module MixpanelExport
+  # Future init stuff.
+end
