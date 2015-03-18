@@ -1,11 +1,5 @@
 module MixpanelExport
-  class Events
-    attr_reader :request
-
-    def initialize(api_secret, api_key)
-      @request = MixpanelExport::Request.new(api_secret, api_key)
-    end
-
+  class Events < Base
     def all(options={})
       options[:unit] = options[:unit] || "month"
       request.get('/events', options)
